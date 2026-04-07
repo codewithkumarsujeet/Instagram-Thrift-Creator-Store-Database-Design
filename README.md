@@ -1,3 +1,82 @@
 A small creator has started an Instagram-based store where they sell thrifted fashion items and handmade products. At first, the business is very small and receives orders through Instagram DMs and WhatsApp. Over time, the store starts growing and now the owner wants to manage products better, keep track of available stock, handle customer orders properly, and maintain basic information about delivery and payments.
 
 Some products are thrifted and only have one piece available. Some are handmade and can have multiple units. Some items may have size, color or condition details. The business owner may also want to store customer details, order history, payment status and shipping status.
+
+
+Diagram code 
+
+customers [icon:user, color:yellow]{
+customer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+name VARCHAR(100)
+phone VARCHAR(15)
+instagram_id VARCHAR(100)
+address TEXT
+city VARCHAR(50)
+created_at TIMESTAMP
+}
+
+products [icon: box, color: blue] {
+product_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+name VARCHAR(150)
+category VARCHAR(100)
+product_type VARCHAR(20)
+price DECIMAL(10,2)
+description TEXT
+created_at TIMESTAMP
+}
+
+inventory [icon: store, color: blue] {
+inventory_id GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+product_id INT FOREIGN KEY
+stock_quantity INT
+condition VARCHAR(50)
+size VARCHAR(20)
+color VARCHAR(50)
+}
+
+orders [icon: home, color:orange] {
+  order_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+  customer_id INT FOREIGN KEY
+  order_date TIMESTAMP
+  order_status VARCHAR(30)
+  payment_status VARCHAR(30)
+  shiping_status VARCHAR(30)
+  total_amount DECIMAL(10,2)
+}
+
+order_items [icon: crate] {
+order_item_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+order_id INT FOREIGN KEY
+product_id INT FOREIGN KEY
+quantity INT 
+price DECIMAL(10,2)
+}
+
+payments [icon: money, color: green] {
+payment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+order_id INT FOREIGN KEY
+payment_method VARCHAR(20)
+payment_date TIMESTAMP
+payment_status VARCHAR(30)
+amount DECIMAL(10,2)
+}
+
+shipping [icon: ship, color: green] {
+shipping_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+order_id INT FOREIGN KEY
+address TEXT
+courier_name VARCHAR(100)
+tracking_number VARCHAR(100)
+shipping_status VARCHAR(30)
+delivery_date TIMESTAMP
+}
+
+customers.customer_id < orders.customer_id
+
+products.product_id < inventory.product_id
+
+orders.order_id < order_items.order_id
+products.product_id < order_items.product_id
+
+orders.order_id < payments.order_id
+orders.order_id < shipping.order_id
